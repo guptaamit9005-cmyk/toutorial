@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorHub - Learn & Share Knowledge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --primary-light: #dbeafe;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-700: #374151;
+            --gray-900: #111827;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #059669;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* View Sections */
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Dashboard View */
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--gray-900);
+        }
+
+        .dashboard-subtitle {
+            color: var(--gray-700);
+            font-size: 1.1rem;
+        }
+
+        .search-filter-section {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .category-filter {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .category-tag {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--gray-300);
+            background-color: white;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .category-tag:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .category-tag.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Tutorial Grid */
+        .tutorials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .tutorial-card {
+            background: white;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid var(--gray-200);
+        }
+
+        .tutorial-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .tutorial-card-header {
+            background: linear-gradient(135deg, var(--primary-light) 0%, #e0f2fe 100%);
+            padding: 1.5rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .tutorial-category {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .tutorial-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .tutorial-card-body {
+            padding: 1.5rem;
+        }
+
+        .tutorial-description {
+            color: var(--gray-700);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .tutorial-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+
+        .tutorial-difficulty {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .difficulty-badge {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+        }
+
+        .difficulty-beginner { background-color: #10b981; }
+        .difficulty-intermediate { background-color: #f59e0b; }
+        .difficulty-advanced { background-color: #ef4444; }
+
+        /* Add Tutorial Form */
+        .form-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-md);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--gray-900);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn-submit {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.75rem 2rem;
+            flex: 1;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-cancel {
+            background-color: var(--gray-200);
+            color: var(--gray-900);
+            padding: 0.75rem 2rem;
+            flex: 1;
+        }
+
+        .btn-cancel:hover {
+            background-color: var(--gray-300);
+        }
+
+        /* Tutorial Detail View */
+        .tutorial-detail {
+            background: white;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .detail-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 3rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .detail-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .detail-meta {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-meta-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .detail-meta-value {
+            font-weight: 600;
+        }
+
+        .detail-content {
+            padding: 3rem 2rem;
+            line-height: 1.8;
+        }
+
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .detail-section h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--gray-900);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+        }
+
+        .detail-section p {
+            color: var(--gray-700);
+            margin-bottom: 1rem;
+        }
+
+        .detail-section ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 1rem;
+        }
+
+        .detail-section li {
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--gray-700);
+            position: relative;
+        }
+
+        .detail-section li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 1rem;
+            padding: 2rem;
+            background-color: var(--gray-50);
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .btn-back {
+            background-color: var(--gray-200);
+            color: var(--gray-900);
+            padding: 0.75rem 1.5rem;
+            flex: 1;
+        }
+
+        .btn-back:hover {
+            background-color: var(--gray-300);
+        }
+
+        .btn-delete {
+            background-color: var(--danger);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            flex: 1;
+        }
+
+        .btn-delete:hover {
+            background-color: #dc2626;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--gray-600);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--accent);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-lg);
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.error {
+            background-color: var(--danger);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .search-filter-section {
+                flex-direction: column;
+            }
+
+            .category-filter {
+                justify-content: flex-start;
+            }
+
+            .tutorials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-header {
+                padding: 2rem;
+            }
+
+            .detail-title {
+                font-size: 1.5rem;
+            }
+
+            .detail-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">📚 TutorHub</div>
+            <div class="nav-buttons">
+                <button class="btn-secondary" onclick="showView('dashboard')">Browse</button>
+                <button class="btn-primary" onclick="showView('add')">+ Add Tutorial</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Dashboard View -->
+        <div id="dashboard" class="view active">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Discover Tutorials</h1>
+                <p class="dashboard-subtitle">Learn from our community of expert tutors</p>
+            </div>
+
+            <div class="search-filter-section">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search tutorials..." onkeyup="filterTutorials()">
+                </div>
+                <div class="category-filter">
+                    <span class="category-tag active" onclick="filterByCategory(event, 'All')">All</span>
+                    <span class="category-tag" onclick="filterByCategory(event, 'Programming')">Programming</span>
+                    <span class="category-tag" onclick="filterByCategory(event, 'Web Development')">Web Dev</span>
+                    <span class="category-tag" onclick="filterByCategory(event, 'Design')">Design</span>
+                    <span class="category-tag" onclick="filterByCategory(event, 'Business')">Business</span>
+                </div>
+            </div>
+
+            <div id="tutorialsContainer" class="tutorials-grid">
+                <!-- Tutorials will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Add Tutorial View -->
+        <div id="add" class="view">
+            <div class="form-section">
+                <h2 class="form-title">Create a New Tutorial</h2>
+                <form onsubmit="addTutorial(event)">
+                    <div class="form-group">
+                        <label>Tutorial Title</label>
+                        <input type="text" id="tutorialTitle" required placeholder="e.g., Learn JavaScript Basics">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select id="tutorialCategory" required>
+                                <option value="">Select a category</option>
+                                <option value="Programming">Programming</option>
+                                <option value="Web Development">Web Development</option>
+                                <option value="Design">Design</option>
+                                <option value="Business">Business</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Difficulty Level</label>
+                            <select id="tutorialDifficulty" required>
+                                <option value="">Select difficulty</option>
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate">Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Short Description</label>
+                        <textarea id="tutorialDescription" required placeholder="Brief overview of what students will learn..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Full Content</label>
+                        <textarea id="tutorialContent" required placeholder="Detailed tutorial content, tips, and explanations..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Duration (minutes)</label>
+                            <input type="number" id="tutorialDuration" required placeholder="30">
+                        </div>
+                        <div class="form-group">
+                            <label>Author Name</label>
+                            <input type="text" id="tutorialAuthor" required placeholder="Your name">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">Publish Tutorial</button>
+                        <button type="button" class="btn-cancel" onclick="showView('dashboard')">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tutorial Detail View -->
+        <div id="detail" class="view">
+            <div class="tutorial-detail">
+                <div class="detail-header" id="detailHeader">
+                    <!-- Will be populated dynamically -->
+                </div>
+                <div class="detail-content" id="detailContent">
+                    <!-- Will be populated dynamically -->
+                </div>
+                <div class="detail-actions">
+                    <button class="btn-back" onclick="showView('dashboard')">← Back to Tutorials</button>
+                    <button class="btn-delete" onclick="deleteTutorial()">Delete Tutorial</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample tutorials data
+        let tutorials = JSON.parse(localStorage.getItem('tutorials')) || [
+            {
+                id: 1,
+                title: 'Getting Started with HTML & CSS',
+                category: 'Web Development',
+                difficulty: 'Beginner',
+                description: 'Learn the fundamentals of HTML and CSS to build beautiful web pages.',
+                content: 'HTML and CSS are the foundation of web development. In this tutorial, we\'ll cover:\n\n1. HTML Structure: Understanding tags, elements, and semantic HTML\n2. CSS Basics: Selectors, properties, and the CSS cascade\n3. Layouts: Flexbox and Grid for modern web design\n4. Responsive Design: Creating mobile-friendly websites\n\nBy the end of this tutorial, you\'ll be able to create well-structured, visually appealing websites that work on all devices.',
+                duration: 45,
+                author: 'Sarah Chen',
+                createdAt: new Date('2024-01-15').toLocaleDateString()
+            },
+            {
+                id: 2,
+                title: 'JavaScript ES6 Fundamentals',
+                category: 'Programming',
+                difficulty: 'Intermediate',
+                description: 'Master modern JavaScript with ES6 features and best practices.',
+                content: 'JavaScript ES6 (ECMAScript 2015) introduced game-changing features:\n\n1. Arrow Functions: Concise syntax and lexical this binding\n2. Let & Const: Block-scoped variable declarations\n3. Template Literals: Easy string interpolation\n4. Destructuring: Extract values from objects and arrays\n5. Classes: OOP in JavaScript\n6. Promises & Async/Await: Handling asynchronous operations\n\nThese features make JavaScript code more readable, maintainable, and powerful.',
+                duration: 60,
+                author: 'Alex Kumar',
+                createdAt: new Date('2024-01-20').toLocaleDateString()
+            },
+            {
+                id: 3,
+                title: 'UI/UX Design Principles',
+                category: 'Design',
+                difficulty: 'Beginner',
+                description: 'Learn the core principles that make designs beautiful and user-friendly.',
+                content: 'Great design is more than aesthetics. This tutorial covers:\n\n1. User Research: Understanding your audience\n2. Visual Hierarchy: Guiding user attention\n3. Color Theory: Psychology of colors in design\n4. Typography: Font selection and readability\n5. White Space: The power of negative space\n6. Consistency: Creating cohesive design systems\n7. Accessibility: Designing for everyone\n\nApply these principles to create designs that not only look good but also work intuitively for users.',
+                duration: 50,
+                author: 'Emma Wilson',
+                createdAt: new Date('2024-01-25').toLocaleDateString()
+            }
+        ];
+
+        let currentFilter = 'All';
+        let currentTutorialId = null;
+
+        // Initialize tutorials on page load
+        function init() {
+            displayTutorials();
+        }
+
+        // Display all tutorials
+        function displayTutorials() {
+            const container = document.getElementById('tutorialsContainer');
+            const filtered = filterTutorialsData();
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-state-icon">🔍</div>
+                        <div class="empty-state-title">No tutorials found</div>
+                        <p>Try adjusting your search or category filters</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(tutorial => `
+                <div class="tutorial-card" onclick="viewTutorial(${tutorial.id})">
+                    <div class="tutorial-card-header">
+                        <span class="tutorial-category">${tutorial.category}</span>
+                        <h3 class="tutorial-title">${tutorial.title}</h3>
+                    </div>
+                    <div class="tutorial-card-body">
+                        <p class="tutorial-description">${tutorial.description}</p>
+                        <div class="tutorial-meta">
+                            <div class="tutorial-difficulty">
+                                <span class="difficulty-badge difficulty-${tutorial.difficulty.toLowerCase()}"></span>
+                                ${tutorial.difficulty}
+                            </div>
+                            <span>⏱️ ${tutorial.duration} mins</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter tutorials data
+        function filterTutorialsData() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            return tutorials.filter(tutorial => {
+                const matchesCategory = currentFilter === 'All' || tutorial.category === currentFilter;
+                const matchesSearch = tutorial.title.toLowerCase().includes(searchTerm) ||
+                                    tutorial.description.toLowerCase().includes(searchTerm) ||
+                                    tutorial.author.toLowerCase().includes(searchTerm);
+                return matchesCategory && matchesSearch;
+            });
+        }
+
+        // Filter by category
+        function filterByCategory(e, category) {
+            currentFilter = category;
+            document.querySelectorAll('.category-tag').forEach(tag => {
+                tag.classList.remove('active');
+            });
+            e.target.classList.add('active');
+            displayTutorials();
+        }
+
+        // Filter tutorials on search
+        function filterTutorials() {
+            displayTutorials();
+        }
+
+        // View tutorial detail
+        function viewTutorial(id) {
+            currentTutorialId = id;
+            const tutorial = tutorials.find(t => t.id === id);
+            
+            if (!tutorial) return;
+
+            const difficultyColor = {
+                'Beginner': '#10b981',
+                'Intermediate': '#f59e0b',
+                'Advanced': '#ef4444'
+            };
+
+            document.getElementById('detailHeader').innerHTML = `
+                <div>
+                    <h1 class="detail-title">${tutorial.title}</h1>
+                    <div class="detail-meta">
+                        <div class="detail-meta-item">
+                            <span class="detail-meta-label">Category</span>
+                            <span class="detail-meta-value">${tutorial.category}</span>
+                        </div>
+                        <div class="detail-meta-item">
+                            <span class="detail-meta-label">Difficulty</span>
+                            <span class="detail-meta-value">${tutorial.difficulty}</span>
+                        </div>
+                        <div class="detail-meta-item">
+                            <span class="detail-meta-label">Duration</span>
+                            <span class="detail-meta-value">${tutorial.duration} minutes</span>
+                        </div>
+                        <div class="detail-meta-item">
+                            <span class="detail-meta-label">Created By</span>
+                            <span class="detail-meta-value">${tutorial.author}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const contentHTML = tutorial.content.split('\n\n').map((section, index) => {
+                if (section.startsWith('1.') || section.startsWith('2.') || section.startsWith('3.')) {
+                    const items = section.split('\n').filter(line => line.trim());
+                    return `
+                        <div class="detail-section">
+                            ${index === 0 ? `<h3>${tutorial.title}</h3>` : ''}
+                            <ul>${items.map(item => `<li>${item.replace(/^\d+\.\s/, '')}</li>`).join('')}</ul>
+                        </div>
+                    `;
+                }
+                return `<div class="detail-section"><p>${section}</p></div>`;
+            }).join('');
+
+            document.getElementById('detailContent').innerHTML = contentHTML;
+
+            showView('detail');
+        }
+
+        // Add tutorial
+        function addTutorial(e) {
+            e.preventDefault();
+            
+            const newTutorial = {
+                id: Math.max(...tutorials.map(t => t.id), 0) + 1,
+                title: document.getElementById('tutorialTitle').value,
+                category: document.getElementById('tutorialCategory').value,
+                difficulty: document.getElementById('tutorialDifficulty').value,
+                description: document.getElementById('tutorialDescription').value,
+                content: document.getElementById('tutorialContent').value,
+                duration: parseInt(document.getElementById('tutorialDuration').value),
+                author: document.getElementById('tutorialAuthor').value,
+                createdAt: new Date().toLocaleDateString()
+            };
+
+            tutorials.push(newTutorial);
+            localStorage.setItem('tutorials', JSON.stringify(tutorials));
+            
+            // Reset form
+            e.target.reset();
+            
+            showToast('Tutorial published successfully!');
+            showView('dashboard');
+            displayTutorials();
+        }
+
+        // Delete tutorial
+        function deleteTutorial() {
+            if (confirm('Are you sure you want to delete this tutorial?')) {
+                tutorials = tutorials.filter(t => t.id !== currentTutorialId);
+                localStorage.setItem('tutorials', JSON.stringify(tutorials));
+                showToast('Tutorial deleted', 'error');
+                showView('dashboard');
+                displayTutorials();
+            }
+        }
+
+        // Show/hide views
+        function showView(viewName) {
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('active');
+            });
+            document.getElementById(viewName).classList.add('active');
+        }
+
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type === 'error' ? 'error' : ''}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>
